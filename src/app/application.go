@@ -14,13 +14,12 @@ var (
 func StartApplication() {
 	// Start db session
 
-	// Make repo / service / http handler
 	dbRepository := db.NewRepository()
 	service := exchange.NewService(dbRepository)
 	handler := http.NewHandler(service)
 
-	// /wallet
-	router.GET("/wallet", handler.FillIn)
-	router.POST("/wallet/withdraw", handler.FillIn)
+	router.GET("/exchanges", handler.FillIn)
+	router.GET("/exchanges/:exchange_id", handler.FillIn)
+	router.POST("/exchanges/transaction", handler.FillIn)
 	router.Run(":8080")
 }
