@@ -18,8 +18,8 @@ func StartApplication() {
 	service := exchange.NewService(dbRepository)
 	handler := http.NewHandler(service)
 
-	router.GET("/exchanges", handler.FillIn)
-	router.GET("/exchanges/:exchange_id", handler.FillIn)
-	router.POST("/exchanges/transaction", handler.FillIn)
+	router.GET("/exchanges", handler.GetExchangeById)
+	router.GET("/exchanges/:exchange_id", handler.GetExchanges)
+	router.POST("/exchanges/transaction", handler.Withdraw)
 	router.Run(":8080")
 }

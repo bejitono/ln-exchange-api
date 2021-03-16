@@ -6,7 +6,9 @@ import (
 )
 
 type ExchangeHTTPHandler interface {
-	FillIn(*gin.Context)
+	GetExchangeById(*gin.Context)
+	GetExchanges(*gin.Context)
+	Withdraw(*gin.Context)
 }
 
 type exchangeHTTPHandler struct {
@@ -19,6 +21,14 @@ func NewHandler(s exchange.Service) ExchangeHTTPHandler {
 	}
 }
 
-func (h *exchangeHTTPHandler) FillIn(c *gin.Context) {
+func (h *exchangeHTTPHandler) GetExchangeById(c *gin.Context) {
+
+}
+
+func (h *exchangeHTTPHandler) GetExchanges(c *gin.Context) {
+
+}
+
+func (h *exchangeHTTPHandler) Withdraw(c *gin.Context) {
 
 }
