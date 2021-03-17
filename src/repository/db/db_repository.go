@@ -6,6 +6,6 @@ type DbRepository interface {
 type dbRepository struct {
 }
 
-func NewRepository() DbRepository {
+func NewDbRepository() DbRepository {
 	return &dbRepository{}
 }
