@@ -1,10 +1,10 @@
 package app
 
 import (
-	exchange "github.com/bejitono/ln-exchange-api/src/domain"
 	"github.com/bejitono/ln-exchange-api/src/http"
 	db "github.com/bejitono/ln-exchange-api/src/repository/db"
-	"github.com/bejitono/ln-exchange-api/src/repository/rest"
+	rest "github.com/bejitono/ln-exchange-api/src/repository/rest"
+	"github.com/bejitono/ln-exchange-api/src/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +17,7 @@ func StartApplication() {
 
 	dbRepository := db.NewDbRepository()
 	restRepository := rest.NewRestRepository()
-	service := exchange.NewService(restRepository, dbRepository)
+	service := service.NewService(restRepository, dbRepository)
 	handler := http.NewHandler(service)
 
 	router.GET("/exchanges", handler.GetExchangeById)

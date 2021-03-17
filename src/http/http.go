@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	exchange "github.com/bejitono/ln-exchange-api/src/domain"
+	"github.com/bejitono/ln-exchange-api/src/service"
 	"github.com/gin-gonic/gin"
 	"github.com/stdemicheli/bookstore_oauth-api/src/utils/errors"
 )
@@ -16,10 +17,10 @@ type ExchangeHTTPHandler interface {
 }
 
 type exchangeHTTPHandler struct {
-	service exchange.Service
+	service service.Service
 }
 
-func NewHandler(s exchange.Service) ExchangeHTTPHandler {
+func NewHandler(s service.Service) ExchangeHTTPHandler {
 	return &exchangeHTTPHandler{
 		service: s,
 	}
