@@ -12,3 +12,10 @@ type Wallet struct {
 	Balance  float64 `json:"balance"`
 	Currency string  `json:"Currency"`
 }
+
+type WithdrawalRequest struct {
+	ExchangeId int64   `json:"exchangeId"`
+	Currency   string  `json:"currency"`
+	Address    string  `json:"address"`
+	Amount     float64 `json:"amount"`
+}
