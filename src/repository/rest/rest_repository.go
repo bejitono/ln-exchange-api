@@ -6,13 +6,16 @@ import (
 
 	exchange "github.com/bejitono/ln-exchange-api/src/domain"
 	"github.com/bejitono/ln-exchange-api/src/utils/errors"
+	"github.com/bitfinexcom/bitfinex-api-go/pkg/models/notification"
 	bitfinex "github.com/bitfinexcom/bitfinex-api-go/v2/rest"
 )
 
 const (
-	bitfinexWallet       = "exchange"
-	bitfinex_api_key_env = "BITFINEX_API_KEY"
-	bitfinex_api_sec_env = "BITFINEX_API_SEC"
+	bitfinexWallet                = "exchange"
+	bitfinex_api_key_env          = "BITFINEX_API_KEY"
+	bitfinex_api_sec_env          = "BITFINEX_API_SEC"
+	bitfinex_success_status       = "SUCCESS"
+	bitfinex_invalid_invoice_text = "Invalid Invoice"
 )
 
 var (
@@ -38,7 +41,9 @@ func init() {
 }
 
 func NewRestRepository() RestExchangeRepository {
-	return &restExchangeRepository{}
+	return &restExchangeRepository{
+		bitfinexRepository: &bitfinexRepository{},
+	}
 }
 
 func (r *restExchangeRepository) Withdraw(req exchange.WithdrawalRequest) *errors.RestErr {
@@ -53,8 +58,26 @@ func (r *restExchangeRepository) Withdraw(req exchange.WithdrawalRequest) *error
 func (r *bitfinexRepository) Withdraw(req exchange.WithdrawalRequest) *errors.RestErr {
 	notification, err := bitfinexClient.Wallet.Withdraw(bitfinexWallet, req.Currency, req.Amount, req.Address)
 	fmt.Println(notification)
+	fmt.Println(notification.Status)
+	fmt.Println(notification.Text)
+
 	if err != nil {
 		return errors.NewNotFoundError(err.Error())
 	}
-	return nil
+
+	switch notification.Status {
+	case bitfinex_success_status:
+		return handleSuccess(notification)
+	default:
+		return errors.NewInternalServerError(notification.Text)
+	}
+}
+
+func handleSuccess(n *notification.Notification) *errors.RestErr {
+	switch n.Text {
+	case bitfinex_invalid_invoice_text:
+		return errors.NewInternalServerError(n.Text)
+	default:
+		return nil
+	}
 }

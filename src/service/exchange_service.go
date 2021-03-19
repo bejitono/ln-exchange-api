@@ -6,7 +6,7 @@ import (
 	exchange "github.com/bejitono/ln-exchange-api/src/domain"
 	db "github.com/bejitono/ln-exchange-api/src/repository/db"
 	rest "github.com/bejitono/ln-exchange-api/src/repository/rest"
-	"github.com/stdemicheli/bookstore_oauth-api/src/utils/errors"
+	"github.com/bejitono/ln-exchange-api/src/utils/errors"
 )
 
 const (
@@ -45,8 +45,5 @@ func (s *service) Withdraw(req exchange.WithdrawalRequest) *errors.RestErr {
 		return errors.NewBadRequestError("Only lightning (lnx) is currently supported")
 	}
 
-	if err := s.restRepository.Withdraw(req); err != nil {
-		return errors.NewNotFoundError(err.Error)
-	}
-	return nil
+	return s.restRepository.Withdraw(req)
 }
