@@ -13,9 +13,21 @@ type Wallet struct {
 	Currency string  `json:"Currency"`
 }
 
+type Invoice struct {
+	InvoiceHash string `json:"invoice_hash"`
+	Invoice     string `json:"invoice"`
+	Amount      string `json:"amount"`
+}
+
 type WithdrawalRequest struct {
 	ExchangeId int64   `json:"exchangeId"`
 	Currency   string  `json:"currency"`
 	Address    string  `json:"address"`
 	Amount     float64 `json:"amount"`
+}
+
+type InvoiceRequest struct {
+	Currency string `json:"currency"`
+	Wallet   string `json:"wallet"`
+	Amount   string `json:"amount"`
 }

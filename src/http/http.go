@@ -14,6 +14,7 @@ type ExchangeHTTPHandler interface {
 	GetExchangeById(*gin.Context)
 	GetExchanges(*gin.Context)
 	Withdraw(*gin.Context)
+	Deposit(*gin.Context)
 }
 
 type exchangeHTTPHandler struct {
@@ -46,6 +47,10 @@ func (h *exchangeHTTPHandler) Withdraw(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusNoContent)
+}
+
+func (h *exchangeHTTPHandler) Deposit(c *gin.Context) {
+
 }
 
 // Private
