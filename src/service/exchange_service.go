@@ -1,8 +1,6 @@
 package service
 
 import (
-	"strings"
-
 	exchange "github.com/bejitono/ln-exchange-api/src/domain"
 	db "github.com/bejitono/ln-exchange-api/src/repository/db"
 	rest "github.com/bejitono/ln-exchange-api/src/repository/rest"
@@ -13,10 +11,23 @@ const (
 	lnCurrency = "lnx"
 )
 
+var validCurrencies = map[string]struct {
+	name string
+	min  float64
+	max  float64
+}{
+	"LNX": {
+		name: "Bitcoin Lightning Network",
+		min:  0.000001,
+		max:  0.02,
+	},
+}
+
 type Service interface {
 	GetExchangeById(int64) (*exchange.Exchange, *errors.RestErr)
 	GetExchanges() ([]exchange.Exchange, *errors.RestErr)
 	Withdraw(exchange.WithdrawalRequest) *errors.RestErr
+	GetInvoice(exchange.InvoiceRequest) (*exchange.Invoice, *errors.RestErr)
 }
 
 type service struct {
@@ -41,9 +52,22 @@ func (s *service) GetExchanges() ([]exchange.Exchange, *errors.RestErr) {
 
 func (s *service) Withdraw(req exchange.WithdrawalRequest) *errors.RestErr {
 	// TODO: get exchange from exchange id
-	if strings.ToLower(req.Currency) != lnCurrency {
-		return errors.NewBadRequestError("Only lightning (lnx) is currently supported")
+	if err := validate(req.Currency); err != nil {
+		return err
 	}
-
 	return s.restRepository.Withdraw(req)
+}
+
+func (s *service) GetInvoice(req exchange.InvoiceRequest) (*exchange.Invoice, *errors.RestErr) {
+	if err := validate(req.Currency); err != nil {
+		return nil, err
+	}
+	return s.restRepository.GetInvoice(req)
+}
+
+func validate(currency string) *errors.RestErr {
+	if _, ok := validCurrencies[currency]; !ok {
+		return errors.NewBadRequestError("Currency not supported")
+	}
+	return nil
 }
