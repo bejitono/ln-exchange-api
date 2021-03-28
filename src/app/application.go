@@ -22,7 +22,8 @@ func StartApplication() {
 
 	router.GET("/exchanges", handler.GetExchangeById)
 	router.GET("/exchanges/:exchange_id", handler.GetExchanges)
-	router.GET("/exchanges/invoice", handler.GetInvoice)
+	router.POST("/exchanges/invoice", handler.GetInvoice)
+	router.POST("/exchanges/address", handler.GetAddress)
 	router.POST("/exchanges/transaction", handler.Withdraw)
 	router.Run(":8080")
 }

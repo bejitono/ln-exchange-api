@@ -48,8 +48,8 @@ func (r *bitfinexRepository) Withdraw(req exchange.WithdrawalRequest) *errors.Re
 }
 
 func (r *bitfinexRepository) GetInvoice(req exchange.InvoiceRequest) (*exchange.Invoice, *errors.RestErr) {
-	depositReq := newDepositRequest(req)
-	invoice, err := bitfinexClient.Invoice.GenerateInvoice(depositReq)
+	invoiceReq := newInvoiceRequest(req)
+	invoice, err := bitfinexClient.Invoice.GenerateInvoice(invoiceReq)
 	if err != nil {
 		return nil, errors.NewNotFoundError(err.Error())
 	}
@@ -57,6 +57,33 @@ func (r *bitfinexRepository) GetInvoice(req exchange.InvoiceRequest) (*exchange.
 		InvoiceHash: invoice.InvoiceHash,
 		Invoice:     invoice.Invoice,
 		Amount:      invoice.Amount,
+	}, nil
+}
+
+func (r *bitfinexRepository) GetAddress(req exchange.AddressRequest) (*exchange.Address, *errors.RestErr) {
+	notification, err := bitfinexClient.Wallet.DepositAddress(bitfinexWallet, strings.ToLower(req.Currency))
+	if err != nil {
+		return nil, errors.NewNotFoundError(err.Error())
+	}
+	if notification.Status != bitfinex_success_status {
+		return nil, errors.NewInternalServerError(notification.Text)
+	}
+	sliceInfo := sliceValOrNil(notification.NotifyInfo)
+	if sliceInfo == nil {
+		return nil, errors.NewInternalServerError("Could not parse notification info")
+	}
+
+	currency := stringValOrEmpty(sliceInfo[1])
+	address := stringValOrEmpty(sliceInfo[4])
+
+	if currency == "" || address == "" {
+		return nil, errors.NewInternalServerError("Failed to generate address")
+	}
+
+	return &exchange.Address{
+		ExchangeId: req.ExchangeId,
+		Currency:   currency,
+		Address:    address,
 	}, nil
 }
 
@@ -69,10 +96,24 @@ func handleSuccess(n *notification.Notification) *errors.RestErr {
 	}
 }
 
-func newDepositRequest(req exchange.InvoiceRequest) bitfinex.DepositInvoiceRequest {
+func newInvoiceRequest(req exchange.InvoiceRequest) bitfinex.DepositInvoiceRequest {
 	return bitfinex.DepositInvoiceRequest{
 		Currency: strings.ToUpper(req.Currency),
 		Wallet:   req.Wallet,
 		Amount:   req.Amount,
 	}
+}
+
+func sliceValOrNil(i interface{}) []interface{} {
+	if r, ok := i.([]interface{}); ok {
+		return r
+	}
+	return nil
+}
+
+func stringValOrEmpty(i interface{}) string {
+	if r, ok := i.(string); ok {
+		return r
+	}
+	return ""
 }

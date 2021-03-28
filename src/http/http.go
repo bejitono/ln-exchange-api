@@ -15,6 +15,7 @@ type ExchangeHTTPHandler interface {
 	GetExchanges(*gin.Context)
 	Withdraw(*gin.Context)
 	GetInvoice(*gin.Context)
+	GetAddress(*gin.Context)
 }
 
 type exchangeHTTPHandler struct {
@@ -56,11 +57,27 @@ func (h *exchangeHTTPHandler) GetInvoice(c *gin.Context) {
 		c.JSON(restErr.Status, restErr)
 		return
 	}
-	if invoice, err := h.service.GetInvoice(); err != nil {
+	invoice, err := h.service.GetInvoice(req)
+	if err != nil {
 		c.JSON(err.Status, err)
 		return
 	}
 	c.JSON(http.StatusOK, invoice)
+}
+
+func (h *exchangeHTTPHandler) GetAddress(c *gin.Context) {
+	var req exchange.AddressRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		restErr := errors.NewBadRequestError("Invalid request")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+	address, err := h.service.GetAddress(req)
+	if err != nil {
+		c.JSON(err.Status, err)
+		return
+	}
+	c.JSON(http.StatusOK, address)
 }
 
 // Private

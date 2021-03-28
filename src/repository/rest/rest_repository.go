@@ -8,6 +8,7 @@ import (
 type RestExchangeRepository interface {
 	Withdraw(exchange.WithdrawalRequest) *errors.RestErr
 	GetInvoice(exchange.InvoiceRequest) (*exchange.Invoice, *errors.RestErr)
+	GetAddress(exchange.AddressRequest) (*exchange.Address, *errors.RestErr)
 }
 
 type restExchangeRepository struct {
@@ -29,6 +30,22 @@ func (r *restExchangeRepository) Withdraw(req exchange.WithdrawalRequest) *error
 	return err
 }
 
-func (r *restExchangeRepository) GetInvoice(exchange.InvoiceRequest) (*exchange.Invoice, *errors.RestErr) {
-	return nil, nil
+func (r *restExchangeRepository) GetInvoice(req exchange.InvoiceRequest) (*exchange.Invoice, *errors.RestErr) {
+	var err *errors.RestErr
+	var invoice *exchange.Invoice
+	switch req.ExchangeId {
+	default:
+		invoice, err = r.bitfinexRepository.GetInvoice(req)
+	}
+	return invoice, err
+}
+
+func (r *restExchangeRepository) GetAddress(req exchange.AddressRequest) (*exchange.Address, *errors.RestErr) {
+	var err *errors.RestErr
+	var address *exchange.Address
+	switch req.ExchangeId {
+	default:
+		address, err = r.bitfinexRepository.GetAddress(req)
+	}
+	return address, err
 }

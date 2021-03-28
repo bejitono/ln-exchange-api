@@ -13,12 +13,6 @@ type Wallet struct {
 	Currency string  `json:"Currency"`
 }
 
-type Invoice struct {
-	InvoiceHash string `json:"invoice_hash"`
-	Invoice     string `json:"invoice"`
-	Amount      string `json:"amount"`
-}
-
 type WithdrawalRequest struct {
 	ExchangeId int64   `json:"exchangeId"`
 	Currency   string  `json:"currency"`
@@ -26,8 +20,26 @@ type WithdrawalRequest struct {
 	Amount     float64 `json:"amount"`
 }
 
+type Invoice struct {
+	InvoiceHash string `json:"invoice_hash"`
+	Invoice     string `json:"invoice"`
+	Amount      string `json:"amount"`
+}
+
 type InvoiceRequest struct {
-	Currency string `json:"currency"`
-	Wallet   string `json:"wallet"`
-	Amount   string `json:"amount"`
+	ExchangeId int64  `json:"exchangeId"`
+	Currency   string `json:"currency"`
+	Wallet     string `json:"wallet"`
+	Amount     string `json:"amount"`
+}
+
+type Address struct {
+	ExchangeId int64  `json:"exchangeId"`
+	Currency   string `json:"currency"`
+	Address    string `json:"address"`
+}
+
+type AddressRequest struct {
+	ExchangeId int64  `json:"exchangeId"`
+	Currency   string `json:"currency"`
 }

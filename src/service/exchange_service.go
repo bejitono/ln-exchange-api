@@ -28,6 +28,7 @@ type Service interface {
 	GetExchanges() ([]exchange.Exchange, *errors.RestErr)
 	Withdraw(exchange.WithdrawalRequest) *errors.RestErr
 	GetInvoice(exchange.InvoiceRequest) (*exchange.Invoice, *errors.RestErr)
+	GetAddress(exchange.AddressRequest) (*exchange.Address, *errors.RestErr)
 }
 
 type service struct {
@@ -63,6 +64,10 @@ func (s *service) GetInvoice(req exchange.InvoiceRequest) (*exchange.Invoice, *e
 		return nil, err
 	}
 	return s.restRepository.GetInvoice(req)
+}
+
+func (s *service) GetAddress(req exchange.AddressRequest) (*exchange.Address, *errors.RestErr) {
+	return s.restRepository.GetAddress(req)
 }
 
 func validate(currency string) *errors.RestErr {
